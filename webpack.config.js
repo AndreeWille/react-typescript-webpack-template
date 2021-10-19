@@ -11,7 +11,7 @@ module.exports = function (_env, argv) {
 
   return {
     devtool: isDevelopment && "cheap-module-source-map",
-    entry: "./src/index.js",
+    entry: "./src/index.tsx",
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "assets/js/[name].[contenthash:8].js",
@@ -30,6 +30,11 @@ module.exports = function (_env, argv) {
               envName: isProduction ? "production" : "development",
             },
           },
+        },
+        {
+          test: /\.(ts|tsx)?$/,
+          loader: "ts-loader",
+          exclude: /node_modules/,
         },
         {
           test: /\.css$/,
@@ -62,7 +67,7 @@ module.exports = function (_env, argv) {
       ],
     },
     resolve: {
-      extensions: [".js", ".jsx"],
+      extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
     },
     plugins: [
       isProduction &&
