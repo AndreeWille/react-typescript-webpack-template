@@ -18,8 +18,19 @@ const App = () => {
       </h2>
       <br />
       <br />
-      <button onClick={() => increment()}>Increment</button>&nbsp;&nbsp;
-      <button onClick={() => decrement()}>Decrement</button>
+      <button
+        className="bg-green-300 border rounded border-green-700 p-1"
+        onClick={() => increment()}
+      >
+        Increment
+      </button>
+      &nbsp;&nbsp;
+      <button
+        className="bg-red-300 border rounded border-red-700 p-1"
+        onClick={() => decrement()}
+      >
+        Decrement
+      </button>
     </div>
   );
 };

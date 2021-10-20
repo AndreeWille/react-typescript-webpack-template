@@ -38,9 +38,12 @@ module.exports = function (_env, argv) {
         },
         {
           test: /\.css$/,
+          include: path.resolve(__dirname, "src/"),
+          exclude: /node_modules/,
           use: [
             isProduction ? MiniCssExtractPlugin.loader : "style-loader",
             "css-loader",
+            "postcss-loader",
           ],
         },
         {
@@ -51,13 +54,6 @@ module.exports = function (_env, argv) {
               limit: 8192,
               name: "static/media/[name].[hash:8].[ext]",
             },
-          },
-        },
-        {
-          test: /\.(eot|otf|ttf|woff|woff2)$/,
-          loader: require.resolve("file-loader"),
-          options: {
-            name: "static/media/[name].[hash:8].[ext]",
           },
         },
       ],
