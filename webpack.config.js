@@ -3,7 +3,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
-const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = function (_env, argv) {
   const isProduction = argv.mode === "production";
@@ -12,6 +13,7 @@ module.exports = function (_env, argv) {
   return {
     devtool: isDevelopment && "cheap-module-source-map",
     entry: "./src/index.tsx",
+    target: "web",
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "assets/js/[name].[contenthash:8].js",
@@ -67,6 +69,7 @@ module.exports = function (_env, argv) {
           filename: "assets/css/[name].[contenthash:8].css",
           chunkFilename: "assets/css/[name].[contenthash:8].chunk.css",
         }),
+      isProduction && new CompressionPlugin(),
       new HtmlWebpackPlugin({
         template: path.resolve(__dirname, "public/index.html"),
         inject: true,
@@ -79,6 +82,7 @@ module.exports = function (_env, argv) {
     ].filter(Boolean),
     optimization: {
       minimize: isProduction,
+      usedExports: true,
       minimizer: [
         new TerserWebpackPlugin({
           terserOptions: {
@@ -95,7 +99,7 @@ module.exports = function (_env, argv) {
             warnings: false,
           },
         }),
-        new OptimizeCssAssetsPlugin(),
+        new CssMinimizerPlugin(),
       ],
       splitChunks: {
         chunks: "all",
@@ -103,18 +107,11 @@ module.exports = function (_env, argv) {
         maxInitialRequests: 10,
         maxAsyncRequests: 10,
         cacheGroups: {
-          vendors: {
-            test: /[\\/]node_modules[\\/]/,
-            name(module, chunks, cacheGroupKey) {
-              const packageName = module.context.match(
-                /[\\/]node_modules[\\/](.*?)([\\/]|$)/
-              )[1];
-              return `${cacheGroupKey}.${packageName.replace("@", "")}`;
-            },
-          },
-          common: {
-            minChunks: 2,
-            priority: -10,
+          styles: {
+            name: "styles",
+            type: "css/mini-extract",
+            chunks: "all",
+            enforce: true,
           },
         },
       },
